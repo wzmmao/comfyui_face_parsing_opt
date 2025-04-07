@@ -26,15 +26,17 @@ if not os.path.exists(os.path.join(ultralytics_bbox_path, "face_yolov8m.pt")):
 # Install packages.
     
 import subprocess
-import pkg_resources
+# import pkg_resources python3.12不兼容
+import sys
+from importlib.metadata import distributions
 
 cur_dir = os.path.dirname(__file__)
 with open(os.path.join(cur_dir, 'requirements.txt')) as f:
     required_packages = f.read().splitlines()
-    installed_packages = [pkg.key for pkg in pkg_resources.working_set]
+    installed_packages = [dist.metadata['Name'].lower() for dist in distributions()]
     missing_packages = set(required_packages) - set(installed_packages)
     if missing_packages:
-        subprocess.check_call(["pip", "install", *missing_packages])
+        subprocess.check_call([sys.executable, "-m", "pip", "install", *missing_packages])
 
 
 # Export classes.
